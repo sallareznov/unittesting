@@ -2,7 +2,7 @@
 
 Un parking à barrières : un ticket à l'entrée, un tarif selon la durée, une caisse automatique, et une barrière de sortie qui ne s'ouvre que si tout est payé.
 
-![Aperçu](apercu.png)
+![Aperçu](screenshot.png)
 
 Le code compile et l'application se lance… mais elle n'a **aucun test**, et elle contient **19 bugs**. Votre mission : les trouver en écrivant des tests, puis les corriger.
 
@@ -20,7 +20,7 @@ Prérequis : Java 21, Maven 3.9, un IDE. Toutes les commandes se lancent **dans 
 | `mvn test -Dtest=TariffTest` | Lance une seule classe de test |
 | `mvn test-compile org.pitest:pitest-maven:mutationCoverage` | Tests de mutation, rapport dans `target/pit-reports/index.html` |
 
-Depuis un IDE, lancez `fr.tp.parking.Launcher`. Un premier test est fourni : `MoneyTest`.
+Depuis un IDE, lancez `com.unittesting.parking.Launcher`. Un premier test est fourni : `MoneyTest`.
 
 ### L'application
 
@@ -31,7 +31,7 @@ Depuis un IDE, lancez `fr.tp.parking.Launcher`. Un premier test est fourni : `Mo
 
 ## Le code
 
-Tout ce qui est à tester est dans `fr.tp.parking.model`, en Java pur (sans JavaFX). Le paquet `fr.tp.parking.ui` est la fenêtre : inutile de le tester.
+Tout ce qui est à tester est dans `com.unittesting.parking.model`, en Java pur (sans JavaFX). Le paquet `com.unittesting.parking.ui` est la fenêtre : inutile de le tester.
 
 | Classe | Rôle | Dépendances à isoler |
 | --- | --- | --- |
@@ -40,7 +40,7 @@ Tout ce qui est à tester est dans `fr.tp.parking.model`, en Java pur (sans Java
 | `Ticket` | Un ticket : numéro, heure d'entrée, paiements | aucune |
 | `CarPark` | Le parking : entrée, caisse, sortie, places libres | `Clock`, `Barrier` (×2), `TicketPrinter`, `PaymentTerminal` (du matériel : à remplacer par des mocks) |
 
-Tous les montants sont des `int` en **centimes**. Les dates sont des `ZonedDateTime` : le fuseau horaire compte (voir le changement d'heure). Placez vos tests dans le paquet `fr.tp.parking.model`, sous `src/test/java`.
+Tous les montants sont des `int` en **centimes**. Les dates sont des `ZonedDateTime` : le fuseau horaire compte (voir le changement d'heure). Placez vos tests dans le paquet `com.unittesting.parking.model`, sous `src/test/java`.
 
 ## Le cahier des charges
 

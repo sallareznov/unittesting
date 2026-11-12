@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>fr.tp</groupId>
+    <groupId>com.unittesting</groupId>
     <artifactId>parking</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>Parking - projet de tests unitaires</name>
@@ -104,10 +104,10 @@
                 </dependencies>
                 <configuration>
                     <targetClasses>
-                        <param>fr.tp.parking.model.*</param>
+                        <param>com.unittesting.parking.model.*</param>
                     </targetClasses>
                     <targetTests>
-                        <param>fr.tp.parking.*</param>
+                        <param>com.unittesting.parking.*</param>
                     </targetTests>
                 </configuration>
             </plugin>
@@ -117,7 +117,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>fr.tp.parking.ui.ParkingApp</mainClass>
+                    <mainClass>com.unittesting.parking.ui.ParkingApp</mainClass>
                 </configuration>
             </plugin>
         </plugins>

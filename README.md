@@ -4,12 +4,12 @@ Deux applications JavaFX qui fonctionnent… à peu près. Elles n'ont **aucun t
 
 | Projet | Ce que c'est | Bugs | Sujet |
 | --- | --- | --- | --- |
-| [Caisse automatique](caisse/) | La caisse libre-service d'un supermarché : scan, balance, promotions, coupons, carte fidélité, paiement | **24** | [caisse/README.md](caisse/README.md) |
+| [Caisse automatique](checkout/) | La caisse libre-service d'un supermarché : scan, balance, promotions, coupons, carte fidélité, paiement | **24** | [checkout/README.md](checkout/README.md) |
 | [Parking](parking/) | Un parking à barrières : tickets, tarif jour/nuit, plafond journalier, caisse, sortie | **19** | [parking/README.md](parking/README.md) |
 
 <p align="center">
-  <img src="caisse/apercu.png" width="49%" alt="Caisse automatique">
-  <img src="parking/apercu.png" width="49%" alt="Parking">
+  <img src="checkout/screenshot.png" width="49%" alt="Caisse automatique">
+  <img src="parking/screenshot.png" width="49%" alt="Parking">
 </p>
 
 ## Démarrage
@@ -18,7 +18,7 @@ Prérequis : Java 21, Maven 3.9, Git, un IDE (IntelliJ IDEA, VS Code ou Eclipse)
 
 ```
 git clone <url de ce dépôt>
-cd unittesting/caisse      # ou unittesting/parking
+cd unittesting/checkout      # ou unittesting/parking
 mvn javafx:run             # lance l'application
 mvn test                   # lance les tests
 ```
