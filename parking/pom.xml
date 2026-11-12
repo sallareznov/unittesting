@@ -36,20 +36,20 @@
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-        <!-- Framework de test (avec les tests paramétrés) -->
+        <!-- Test framework (with parameterized tests) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Assertions fluentes -->
+        <!-- Fluent assertions -->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>3.26.3</version>
             <scope>test</scope>
         </dependency>
-        <!-- Framework d'isolation (mocks) -->
+        <!-- Mocking framework -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
@@ -70,7 +70,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.2</version>
                 <configuration>
-                    <!-- Mockito 5 s'attache en agent : on garde @{argLine} pour JaCoCo -->
+                    <!-- Mockito 5 attaches as an agent: keep @{argLine} for JaCoCo -->
                     <argLine>@{argLine} -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
                 </configuration>
             </plugin>
@@ -80,17 +80,17 @@
                 <version>${jacoco.version}</version>
                 <executions>
                     <execution>
-                        <id>preparer-agent</id>
+                        <id>prepare-agent</id>
                         <goals><goal>prepare-agent</goal></goals>
                     </execution>
                     <execution>
-                        <id>rapport</id>
+                        <id>report</id>
                         <phase>test</phase>
                         <goals><goal>report</goal></goals>
                     </execution>
                 </executions>
             </plugin>
-            <!-- Tests de mutation : mvn test-compile org.pitest:pitest-maven:mutationCoverage -->
+            <!-- Mutation testing: mvn test-compile org.pitest:pitest-maven:mutationCoverage -->
             <plugin>
                 <groupId>org.pitest</groupId>
                 <artifactId>pitest-maven</artifactId>
@@ -111,7 +111,7 @@
                     </targetTests>
                 </configuration>
             </plugin>
-            <!-- Lancer l'application : mvn javafx:run -->
+            <!-- Run the app: mvn javafx:run -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
