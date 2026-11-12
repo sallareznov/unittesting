@@ -4,7 +4,7 @@ Un distributeur automatique en JavaFX : on insère des pièces (ou on paie par c
 
 ![Aperçu](apercu.png)
 
-Le code compile et l'application se lance… mais elle n'a **aucun test**, et elle contient **une quinzaine de bugs**. Votre mission : les trouver en écrivant des tests, puis les corriger.
+Le code compile et l'application se lance… mais elle n'a **aucun test**, et elle contient **19 bugs**. Votre mission : les trouver en écrivant des tests, puis les corriger.
 
 > **Règle d'or : pas de correction sans test rouge.**
 > Pour chaque bug : 1) écrivez un test qui échoue, commit `BUG: …` ; 2) corrigez, le test passe, commit `FIX: …`.
@@ -39,8 +39,6 @@ Tout ce qui est à tester est dans `fr.tp.vending.model`, en Java pur (sans Java
 Tous les montants sont des `int` en **centimes**.
 
 ## Le cahier des charges
-
-C'est la référence : quand le code et le cahier des charges ne sont pas d'accord, c'est le code qui a tort.
 
 ### Montants (`Money`)
 - `Money.format` affiche les euros, une virgule, puis toujours deux chiffres pour les centimes, puis ` €` : `5` → `"0,05 €"`, `1000` → `"10,00 €"`.
