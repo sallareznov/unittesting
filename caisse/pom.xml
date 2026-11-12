@@ -117,7 +117,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>fr.tp.checkout.ui.VendingApp</mainClass>
+                    <mainClass>fr.tp.checkout.ui.CheckoutApp</mainClass>
                 </configuration>
             </plugin>
         </plugins>
