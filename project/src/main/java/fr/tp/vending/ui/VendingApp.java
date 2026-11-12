@@ -1,13 +1,16 @@
 package fr.tp.vending.ui;
 
+import fr.tp.vending.model.CardTerminal;
 import fr.tp.vending.model.ChangeCalculator;
 import fr.tp.vending.model.Coin;
 import fr.tp.vending.model.CoinDispenser;
 import fr.tp.vending.model.Display;
+import fr.tp.vending.model.Pricing;
 import fr.tp.vending.model.Product;
 import fr.tp.vending.model.ProductDispenser;
 import fr.tp.vending.model.Slot;
 import fr.tp.vending.model.VendingMachine;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -38,9 +41,9 @@ import javafx.util.Duration;
 
 /**
  * The machine on screen. The window plays the part of the hardware: it implements
- * Display, CoinDispenser and ProductDispenser for the model, exactly as mocks do in the tests.
+ * Display, CoinDispenser, ProductDispenser and CardTerminal for the model, exactly as mocks do in the tests.
  */
-public class VendingApp extends Application implements Display, CoinDispenser, ProductDispenser {
+public class VendingApp extends Application implements Display, CoinDispenser, ProductDispenser, CardTerminal {
 
     private static final String[][] CATALOGUE = {
         {"Eau", "90"}, {"Cola", "130"}, {"Orange", "130"}, {"Thé glacé", "150"},
@@ -57,6 +60,7 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
     private final Map<String, SlotView> slotViews = new HashMap<>();
     private VendingMachine machine;
     private String typed = "";
+    private final javafx.scene.control.ToggleButton cardButton = new javafx.scene.control.ToggleButton("Payer par carte");
 
     public static void main(String[] args) {
         launch(args);
@@ -75,7 +79,8 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
             float_.put(c, 10);
         }
         Scene scene = new Scene(buildRoot(slots), 1000, 860);
-        machine = new VendingMachine(slots, float_, new ChangeCalculator(), this, this, this);
+        machine = new VendingMachine(slots, float_, new ChangeCalculator(),
+                new Pricing(Clock.systemDefaultZone()), this, this, this, this);
         stage.setTitle("Distributeur");
         stage.setScene(scene);
         stage.show();
@@ -182,6 +187,15 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
             machine.cancel();
         });
 
+        cardButton.setMaxWidth(Double.MAX_VALUE);
+        cardButton.setStyle("-fx-background-color: #1e88e5; -fx-text-fill: white; -fx-font-weight: bold;"
+                + "-fx-font-size: 14; -fx-background-radius: 20; -fx-padding: 9 16 9 16;");
+        cardButton.setOnAction(e -> {
+            if (cardButton.isSelected()) {
+                show("Carte bancaire", "Tapez le code");
+            }
+        });
+
         Label trayTitle = small("MONNAIE");
         changeTray.setPadding(new Insets(10));
         changeTray.setPrefHeight(70);
@@ -192,7 +206,7 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
 
         Region grow = new Region();
         VBox.setVgrow(grow, Priority.ALWAYS);
-        VBox panel = new VBox(14, brand, screen, small("CHOISIR UN PRODUIT"), keypad, coinTitle, coinRow, cancel,
+        VBox panel = new VBox(14, brand, screen, small("CHOISIR UN PRODUIT"), keypad, coinTitle, coinRow, cancel, cardButton,
                 grow, trayTitle, changeTray);
         panel.setPadding(new Insets(18));
         panel.setPrefWidth(290);
@@ -213,7 +227,12 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
         typed = Character.isLetter(key.charAt(0)) ? key : typed + key;
         codeLabel.setText("Choix : " + typed);
         if (typed.length() == 2) {
-            machine.select(typed);
+            if (cardButton.isSelected()) {
+                machine.payByCard(typed);
+                cardButton.setSelected(false);
+            } else {
+                machine.select(typed);
+            }
             typed = "";
         }
     }
@@ -238,6 +257,11 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
         for (int i = 0; i < count; i++) {
             changeTray.getChildren().add(new CoinView(coin, 0.9));
         }
+    }
+
+    @Override
+    public boolean charge(int cents) {
+        return true;   // a demo terminal that accepts every card
     }
 
     @Override

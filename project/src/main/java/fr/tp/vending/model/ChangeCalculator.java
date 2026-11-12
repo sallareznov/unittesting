@@ -5,19 +5,22 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Finds which coins to give back, using as few coins as possible and only the coins available.
- * Greedy: take the largest coin that still fits, as many times as possible.
+ * Finds which coins to give back: the exact amount, with as few coins as possible,
+ * using only the coins available.
  */
 public class ChangeCalculator {
 
-    /** @return the coins to give, or empty if the exact amount cannot be made. */
+    /** @return the coins to give (an empty map for 0), or empty if the amount cannot be made. */
     public Optional<Map<Coin, Integer>> compute(int amount, Map<Coin, Integer> available) {
         if (amount < 0) {
             throw new IllegalArgumentException("Negative amount: " + amount);
         }
+        Coin[] coins = Coin.values();
         Map<Coin, Integer> change = new EnumMap<>(Coin.class);
         int left = amount;
-        for (Coin coin : Coin.values()) {
+        // largest coin first, as many as possible
+        for (int i = 0; i < coins.length - 1; i++) {
+            Coin coin = coins[i];
             int count = Math.min(left / coin.cents(), available.getOrDefault(coin, 0));
             if (count > 0) {
                 change.put(coin, count);
