@@ -6,7 +6,7 @@ public class Slot {
     public static final int CAPACITY = 10;
 
     private final String code;
-    private final Product product;
+    private Product product;
     private int quantity;
 
     public Slot(String code, Product product, int quantity) {
@@ -36,6 +36,11 @@ public class Slot {
             throw new IllegalStateException("Slot " + code + " would overflow");
         }
         quantity += count;
+    }
+
+    /** Puts another product in this slot (maintenance). The quantity is kept. */
+    void replaceProduct(Product newProduct) {
+        this.product = newProduct;
     }
 
     public String code() { return code; }

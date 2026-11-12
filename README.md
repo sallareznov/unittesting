@@ -16,11 +16,26 @@ Prérequis : Java 21, Maven 3.9, un IDE.
 | Commande | Effet |
 | --- | --- |
 | `mvn javafx:run` | Lance l'application |
+| `mvn javafx:run -Dmaintenance=true` | Lance l'application avec le panneau de maintenance ouvert |
 | `mvn test` | Lance les tests et produit le rapport de couverture `target/site/jacoco/index.html` |
 | `mvn test -Dtest=SlotTest` | Lance une seule classe de test |
 | `mvn test-compile org.pitest:pitest-maven:mutationCoverage` | Tests de mutation, rapport dans `target/pit-reports/index.html` |
 
 Depuis un IDE, lancez `fr.tp.vending.Launcher`. Un premier test est fourni : `MoneyTest`.
+
+### Le mode maintenance
+
+**Ctrl+M** (**Cmd+M** sur Mac) ouvre ou ferme le panneau du technicien, à droite de la fenêtre. Il donne accès à ce que le client ne voit pas :
+
+- **Horloge** : régler une heure simulée (par exemple `14:00:00`) pour essayer la happy hour à n'importe quel moment ;
+- **Lecteur de carte** : faire accepter ou refuser le paiement, et voir le dernier montant débité ;
+- **Caisse** : voir et modifier le nombre de pièces de chaque sorte dans la machine ;
+- **Ventes** : le chiffre d'affaires et le nombre de ventes par spirale ;
+- **Réapprovisionner** une spirale ;
+- **Saisie libre du code** : taper un code au clavier (`b2`, ` B2 `…) au lieu d'utiliser le pavé ;
+- **Changer un produit** : mettre un autre produit (nom et prix) dans une spirale.
+
+Pratique pour reproduire à la main un bug trouvé par un test… mais ce sont vos tests qui doivent le prouver.
 
 ## Le code
 
@@ -95,6 +110,10 @@ Tous les montants sont des `int` en **centimes**.
 **Statistiques et stock**
 - `revenue()` est le total des **prix payés** (pièces et carte confondues). `salesOf(code)` est le nombre de ventes d'une spirale (code insensible à la casse).
 - `restock(code, n)` réapprovisionne une spirale (code insensible à la casse) ; un code inconnu lève une `IllegalArgumentException`.
+
+**Maintenance**
+- `replaceProduct(code, produit)` met un autre produit dans une spirale (code insensible à la casse) ; la quantité ne change pas. Un code inconnu lève une `IllegalArgumentException`.
+- `setCoins(pièce, n)` fixe le nombre de pièces d'une sorte dans la caisse. Un nombre négatif lève une `IllegalArgumentException` et ne change rien.
 
 ## Pour aller plus loin
 

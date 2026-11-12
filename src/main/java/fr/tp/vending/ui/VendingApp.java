@@ -10,7 +10,6 @@ import fr.tp.vending.model.Product;
 import fr.tp.vending.model.ProductDispenser;
 import fr.tp.vending.model.Slot;
 import fr.tp.vending.model.VendingMachine;
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -23,6 +22,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
@@ -59,6 +61,9 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
     private final Canvas pickup = new Canvas(330, 80);
     private final Map<String, SlotView> slotViews = new HashMap<>();
     private VendingMachine machine;
+    private final SimulatedClock clock = new SimulatedClock();
+    private final Pricing pricing = new Pricing(clock);
+    private MaintenancePanel maintenance;
     private String typed = "";
     private final javafx.scene.control.ToggleButton cardButton = new javafx.scene.control.ToggleButton("Payer par carte");
 
@@ -78,15 +83,30 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
         for (Coin c : Coin.values()) {
             float_.put(c, 10);
         }
-        Scene scene = new Scene(buildRoot(slots), 1000, 860);
-        machine = new VendingMachine(slots, float_, new ChangeCalculator(),
-                new Pricing(Clock.systemDefaultZone()), this, this, this, this);
+        StackPane front = buildRoot(slots);
+        machine = new VendingMachine(slots, float_, new ChangeCalculator(), pricing, this, this, this, this);
+        maintenance = new MaintenancePanel(machine, clock, pricing, this::refreshSlots, this::choose);
+        maintenance.getStylesheets().add("data:text/css,.radio-button,.label{-fx-text-fill:%23e6e6e6;}");
+        boolean open = Boolean.getBoolean("maintenance") || System.getProperty("snapshot") != null;
+        maintenance.setVisible(open);
+        maintenance.setManaged(open);
+        HBox.setHgrow(front, Priority.ALWAYS);
+        HBox outer = new HBox(front, maintenance);
+        Scene scene = new Scene(outer, open ? 1330 : 1000, 860);
+        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M, KeyCombination.SHORTCUT_DOWN), () -> {
+            boolean show = !maintenance.isVisible();
+            maintenance.setVisible(show);
+            maintenance.setManaged(show);
+            maintenance.refresh();
+            stage.setWidth(stage.getWidth() + (show ? 330 : -330));
+        });
         stage.setTitle("Distributeur");
         stage.setScene(scene);
         stage.show();
 
         String snapshot = System.getProperty("snapshot");
         if (snapshot != null) {
+            maintenance.snapshotDemo();
             machine.insert(Coin.TWO_EUROS);
             press("B");
             press("2");
@@ -227,14 +247,23 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
         typed = Character.isLetter(key.charAt(0)) ? key : typed + key;
         codeLabel.setText("Choix : " + typed);
         if (typed.length() == 2) {
-            if (cardButton.isSelected()) {
-                machine.payByCard(typed);
-                cardButton.setSelected(false);
-            } else {
-                machine.select(typed);
-            }
+            choose(typed);
             typed = "";
         }
+    }
+
+    /** Buys the product with this code, with the coins or by card. */
+    private void choose(String code) {
+        if (cardButton.isSelected()) {
+            machine.payByCard(code);
+            cardButton.setSelected(false);
+        } else {
+            machine.select(code);
+        }
+    }
+
+    private void refreshSlots() {
+        slotViews.values().forEach(SlotView::refresh);
     }
 
     private static Label small(String text) {
@@ -250,6 +279,13 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
     public void show(String a, String b) {
         line1.setText(a);
         line2.setText(b);
+        if (maintenance != null) {
+            // after the machine has finished its action (sales are recorded after the message)
+            Platform.runLater(() -> {
+                maintenance.refresh();
+                refreshSlots();
+            });
+        }
     }
 
     @Override
@@ -261,7 +297,11 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
 
     @Override
     public boolean charge(int cents) {
-        return true;   // a demo terminal that accepts every card
+        boolean accepted = maintenance == null || maintenance.cardAccepted();
+        if (maintenance != null) {
+            maintenance.recordCharge(cents, accepted);
+        }
+        return accepted;
     }
 
     @Override

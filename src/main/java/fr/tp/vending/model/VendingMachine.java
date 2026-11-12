@@ -114,6 +114,23 @@ public class VendingMachine {
         slot.restock(count);
     }
 
+    /** Maintenance: puts another product in a slot. */
+    public void replaceProduct(String code, Product product) {
+        Slot slot = slots.get(normalise(code));
+        if (slot == null) {
+            throw new IllegalArgumentException("Unknown code: " + code);
+        }
+        slot.replaceProduct(product);
+    }
+
+    /** Maintenance: sets how many coins of one kind are in the machine. */
+    public void setCoins(Coin coin, int count) {
+        if (count < 0) {
+            throw new IllegalArgumentException("Negative count: " + count);
+        }
+        coins.put(coin, count);
+    }
+
     private Slot findAvailable(String code) {
         Slot slot = slots.get(normalise(code));
         if (slot == null) {
