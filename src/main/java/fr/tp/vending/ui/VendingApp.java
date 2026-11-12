@@ -22,9 +22,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
@@ -64,6 +61,7 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
     private final SimulatedClock clock = new SimulatedClock();
     private final Pricing pricing = new Pricing(clock);
     private MaintenancePanel maintenance;
+    private Stage stage;
     private String typed = "";
     private final javafx.scene.control.ToggleButton cardButton = new javafx.scene.control.ToggleButton("Payer par carte");
 
@@ -73,6 +71,7 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
 
     @Override
     public void start(Stage stage) {
+        this.stage = stage;
         List<Slot> slots = new ArrayList<>();
         for (int i = 0; i < CATALOGUE.length; i++) {
             String code = "" + (char) ('A' + i / 4) + (i % 4 + 1);
@@ -87,19 +86,12 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
         machine = new VendingMachine(slots, float_, new ChangeCalculator(), pricing, this, this, this, this);
         maintenance = new MaintenancePanel(machine, clock, pricing, this::refreshSlots, this::choose);
         maintenance.getStylesheets().add("data:text/css,.radio-button,.label{-fx-text-fill:%23e6e6e6;}");
-        boolean open = Boolean.getBoolean("maintenance") || System.getProperty("snapshot") != null;
+        boolean open = System.getProperty("snapshot") != null;
         maintenance.setVisible(open);
         maintenance.setManaged(open);
         HBox.setHgrow(front, Priority.ALWAYS);
         HBox outer = new HBox(front, maintenance);
         Scene scene = new Scene(outer, open ? 1330 : 1000, 860);
-        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M, KeyCombination.SHORTCUT_DOWN), () -> {
-            boolean show = !maintenance.isVisible();
-            maintenance.setVisible(show);
-            maintenance.setManaged(show);
-            maintenance.refresh();
-            stage.setWidth(stage.getWidth() + (show ? 330 : -330));
-        });
         stage.setTitle("Distributeur");
         stage.setScene(scene);
         stage.show();
@@ -148,7 +140,19 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
         flap.setStyle("-fx-background-color: #0d1014; -fx-background-radius: 6; -fx-border-color: #3a414b;"
                 + "-fx-border-width: 3; -fx-border-radius: 6;");
         flap.setMaxWidth(360);
-        VBox left = new VBox(18, glass, flap);
+        // the technician's button, at the bottom right like a service lock
+        Button maintenanceButton = new Button("Maintenance");
+        maintenanceButton.setStyle("-fx-background-color: #f5c400; -fx-text-fill: #1a1a1a; -fx-font-weight: bold;"
+                + "-fx-font-size: 13; -fx-background-radius: 6; -fx-padding: 8 14 8 14;"
+                + "-fx-border-color: #1a1a1a; -fx-border-width: 2; -fx-border-radius: 6;");
+        maintenanceButton.setOnAction(e -> toggleMaintenance());
+        Region flapGap = new Region();
+        HBox.setHgrow(flapGap, Priority.ALWAYS);
+        Region flapLeft = new Region();
+        HBox.setHgrow(flapLeft, Priority.ALWAYS);
+        HBox bottom = new HBox(flapLeft, flap, flapGap, maintenanceButton);
+        bottom.setAlignment(Pos.CENTER);
+        VBox left = new VBox(18, glass, bottom);
         left.setAlignment(Pos.TOP_CENTER);
 
         // --- control panel ---
@@ -250,6 +254,15 @@ public class VendingApp extends Application implements Display, CoinDispenser, P
             choose(typed);
             typed = "";
         }
+    }
+
+    /** Opens or closes the technician's panel on the right of the window. */
+    private void toggleMaintenance() {
+        boolean show = !maintenance.isVisible();
+        maintenance.setVisible(show);
+        maintenance.setManaged(show);
+        maintenance.refresh();
+        stage.setWidth(stage.getWidth() + (show ? 330 : -330));
     }
 
     /** Buys the product with this code, with the coins or by card. */

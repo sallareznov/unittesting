@@ -16,7 +16,6 @@ Prérequis : Java 21, Maven 3.9, un IDE.
 | Commande | Effet |
 | --- | --- |
 | `mvn javafx:run` | Lance l'application |
-| `mvn javafx:run -Dmaintenance=true` | Lance l'application avec le panneau de maintenance ouvert |
 | `mvn test` | Lance les tests et produit le rapport de couverture `target/site/jacoco/index.html` |
 | `mvn test -Dtest=SlotTest` | Lance une seule classe de test |
 | `mvn test-compile org.pitest:pitest-maven:mutationCoverage` | Tests de mutation, rapport dans `target/pit-reports/index.html` |
@@ -25,7 +24,7 @@ Depuis un IDE, lancez `fr.tp.vending.Launcher`. Un premier test est fourni : `Mo
 
 ### Le mode maintenance
 
-**Ctrl+M** (**Cmd+M** sur Mac) ouvre ou ferme le panneau du technicien, à droite de la fenêtre. Il donne accès à ce que le client ne voit pas :
+Le bouton jaune **Maintenance**, sous la vitrine, ouvre ou ferme le panneau du technicien, à droite de la fenêtre. Il donne accès à ce que le client ne voit pas :
 
 - **Horloge** : régler une heure simulée (par exemple `14:00:00`) pour essayer la happy hour à n'importe quel moment ;
 - **Lecteur de carte** : faire accepter ou refuser le paiement, et voir le dernier montant débité ;

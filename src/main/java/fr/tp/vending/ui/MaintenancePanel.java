@@ -30,7 +30,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 /**
- * The technician's drawer (Ctrl+M). It reaches the parts of the model the customer side cannot:
+ * The technician's drawer (the "Maintenance" button). It reaches the parts of the model the customer side cannot:
  * the time, the card reader's answer, the coin stock, sales, restocking and the products.
  */
 class MaintenancePanel extends ScrollPane {
